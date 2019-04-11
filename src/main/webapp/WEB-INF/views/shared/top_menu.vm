@@ -1,0 +1,23 @@
+<div class="navbar navbar-inverse navbar-fixed-top">
+    <div class="navbar-inner">
+        <div class="container">
+            <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="brand" href="$ctx/">群体用户画像</a>
+            <div class="nav-collapse collapse">
+                <ul class="nav">
+                	<li #if("user_index" == $top_menu) class=active #end><a href="$ctx/user_index/list.do"  class="brand" style="margin-left:10px;font-size: 15px;">画像数据</a></li>
+                	<li #if("air_travle" == $top_menu) class=active #end><a href="$ctx/air_travel/list.do" class="brand" style="margin-left:10px;font-size: 15px;">航旅行为</a></li>
+                	<li #if("account_change" == $top_menu) class=active #end><a href="$ctx/account_change/list.do" class="brand" style="margin-left:10px;font-size: 15px;">收支等级</a></li>
+                	<li #if("society_relation" == $top_menu) class=active #end><a href="$ctx/society_relation/list.do" class="brand" style="margin-left:10px;font-size: 15px;">社交关系</a></li>
+                	<li #if("apply_loan" == $top_menu) class=active #end><a href="$ctx/apply_loan/list.do" class="brand" style="margin-left:10px;font-size: 15px;">多次申请</a></li>
+                	<li #if("hbase_index" == $top_menu) class=active #end><a href="$ctx/hbase_index/list.do" class="brand" style="margin-left:10px;font-size: 15px;">hbase索引</a></li>
+                </ul>
+            </div>
+            <a href="$ctx/user/loginOut.do" class="brand" style="float:right; font-size: 15px;">退出</a>
+          </div>
+    </div>
+</div>

@@ -1,0 +1,41 @@
+#macro (page $currentPage $totalPage $submitId $pageHideId)
+
+#set($FRONT_LEN = 2)
+#set($BEHIND_LEN = 2)
+#set($PAGER_LEN = 5)
+#set($PAGER_CENTER = $!{totalPage} - $!{BEHIND_LEN})
+
+#if($!{totalPage} <= $!{PAGER_LEN})
+    #set($START_PAGE = 1)
+    #set($END_PAGE = ${totalPage})
+#elseif($!{currentPage} <= $!{FRONT_LEN})
+    #set($START_PAGE = 1)
+    #set($END_PAGE = $PAGER_LEN)
+#elseif($!{currentPage} > $!{PAGER_CENTER})
+    #set($START_PAGE = $!{totalPage} - $!{PAGER_LEN} + 1)
+    #set($END_PAGE = $totalPage)
+#else
+    #set($START_PAGE = $!{currentPage} - $!{FRONT_LEN})
+    #set($END_PAGE = $!{currentPage} + $!{BEHIND_LEN})
+#end
+
+<div class="pagination">
+  <ul>
+  	<li #if($!{currentPage} == 1) class="disabled"#end><a #if($!{currentPage} != 1) #set($p = $!{currentPage} - 1) href="javascript:changePage($p,'$submitId','$pageHideId')"#end >前一页</a></li>
+	#foreach($p in [$!{START_PAGE}..$!{END_PAGE}])
+		<li #if($!{p} == $!{currentPage})class="active"#end><a #if($!{p} != $!{currentPage}) href="javascript:changePage($p,'$submitId','$pageHideId')"#end>$p</a></li>
+	#end
+	<li #if($!{currentPage} == $!{totalPage}) class="disabled" #end><a #if($!{currentPage} != $!{totalPage}) #set($p = $!{currentPage} + 1) href="javascript:changePage($p,'$submitId','$pageHideId')" #end>下一页</a></li>
+  </ul>
+</div>
+#end
+
+<script language="javascript">
+var changePage;
+$(document).ready(function(){
+	changePage=function(num,submitId,pageHideId){
+	   $("#"+pageHideId+"").val(num);
+	   $("#"+submitId).click();
+	}
+});
+</script>

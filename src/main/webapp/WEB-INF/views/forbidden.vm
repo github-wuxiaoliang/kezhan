@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Forbidden</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+    	#if($!forward)
+        	<h1>您没有权限访问$!forward页面！</h1>
+        #else
+        	<h1>没有操作资源的权限！</h1>
+        #end
+    </body>
+<script type="text/javascript">
+    function delayedRedirect(n, url) {
+        var start = new Date().getTime();
+        setTimeout(function(){
+        	window.location.href = url;
+        },n);        
+    }
+    delayedRedirect(1000 * 3, "$ctx/");
+</script>
+</html>

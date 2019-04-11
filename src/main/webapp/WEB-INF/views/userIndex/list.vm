@@ -1,0 +1,457 @@
+#set($side_bar="schedule_client")
+#set($tab_bar="list")
+#set($top_menu="user_index")
+#parse("shared/header.vm")
+#parse("shared/top_menu.vm")
+#parse("shared/side_bar.vm")
+#parse("shared/client_tab_bar.vm")
+#parse("shared/page.vm")
+#parse("shared/modal.vm")
+<div class="row-fluid">
+	<form action="" method="POST" id="find_form">
+	<div class="control-group">
+      <div class="controls  controls-row" id="condition">
+      	
+    	<div class="controls controls-row ecCate" >
+			<p class="span2 btn btn-success disabled" style="width:7.5%">消费类目</p>
+    		<select class="span2" name="cateName">
+				<option value="">类目名称</option>
+				<option value="其他">其他</option>
+				<option value="服装配饰">服装配饰</option>
+				<option value="鞋">鞋</option>
+				<option value="母婴用品">母婴用品</option>
+				<option value="文化娱乐">文化娱乐</option>
+				<option value="运动户外">运动户外</option>
+				<option value="日用百货">日用百货</option>
+				<option value="个护化妆">个护化妆</option>
+				<option value="箱包">箱包</option>
+				<option value="手机/手机配件">手机/手机配件</option>
+				<option value="电脑/办公">电脑/办公</option>
+				<option value="美食特产">美食特产</option>
+				<option value="家具建材">家具建材</option>
+				<option value="通讯">通讯</option>
+				<option value="家用电器">家用电器</option>
+				<option value="家居家纺">家居家纺</option>
+				<option value="数码">数码</option>
+				<option value="钟表首饰">钟表首饰</option>
+				<option value="汽车用品">汽车用品</option>
+				<option value="网络游戏/虚拟物品">网络游戏/虚拟物品</option>
+				<option value="医疗保健">医疗保健</option>
+				<option value="本地生活">本地生活</option>
+				<option value="珠宝贵金属">珠宝贵金属</option>
+				<option value="收藏">收藏</option>
+				<option value="宠物生活">宠物生活</option>
+				<option value="出差旅游">出差旅游</option>
+				<option value="教育培训">教育培训</option>
+				<option value="房产">房产</option>
+				<option value="保险/理财">保险/理财</option>
+			</select>
+    		<input type="text" name="visit" class="span2" placeholder="浏览次数范围"/>
+        	<input type="text" name="buy"  class="span2" placeholder="购买次数范围"/>
+        	<input type="text" name="pay" class="span2" placeholder="购买金额范围"/>
+        	<input type="text" name="month" class="span2" placeholder="最后发生时间范围"/>
+        	<i class="icon-plus" style="margin:0 10px 0px" onclick="javascript:addEcQuery(this)"></i>
+    	</div>
+    	<div class="controls controls-row mediaCate">
+    		<p class="span2 btn btn-success disabled" style="width:7.5%">媒体类目</p>
+        	<select class="span2" name="cateName">
+        		<option value="">类目名称</option>
+        		<option value="其他">其他</option>
+				<option value="财经">财经</option>
+				<option value="交友">交友</option>
+				<option value="军事">军事</option>
+				<option value="彩票">彩票</option>
+				<option value="旅游">旅游</option>
+				<option value="女性时尚">女性时尚</option>
+				<option value="汽车">汽车</option>
+				<option value="社区">社区</option>
+				<option value="生活">生活</option>
+				<option value="视频">视频</option>
+				<option value="IT">IT</option>
+				<option value="数码">数码</option>
+				<option value="手机">手机</option>
+				<option value="体育">体育</option>
+				<option value="游戏">游戏</option>
+				<option value="文学艺术">文学艺术</option>
+				<option value="新闻">新闻</option>
+				<option value="音乐">音乐</option>
+				<option value="支付">支付</option>
+				<option value="影视">影视</option>
+				<option value="邮箱">邮箱</option>
+				<option value="招聘">招聘</option>
+				<option value="教育">教育</option>
+				<option value="房产">房产</option>
+				<option value="应用">应用</option>
+				<option value="动漫">动漫</option>
+				<option value="美食">美食</option>
+				<option value="母婴/育儿">母婴/育儿</option>
+				<option value="知识问答">知识问答</option>
+				<option value="娱乐">娱乐</option>
+				<option value="历史">历史</option>
+				<option value="健康">健康</option>
+				<option value="户外">户外</option>
+        	</select>
+        	<input type="text" name="visitday" class="span2" placeholder="浏览天数范围" />
+    		<i class="icon-plus" style="margin:0 10px 0px" onclick="javascript:addMediaQuery(this)"></i>
+        </div>
+        <div class="controls controls-row">
+        	<p class="span2 btn btn-success disabled" style="width:7.5%">品牌偏好</p>
+    		<input type="text" name="brandListStr" class="span5" value="$!param.brandListStr" placeholder="多个品牌用逗号分隔"/>
+        </div>
+        <div class="controls controls-row">
+    		<p class="span2 btn btn-success disabled" style="width:7.5%">资产信息</p>
+			<select class="span2" name="title">
+            	<option value="">企业主标识</option>
+            	<option value="0" #if($!param.title == "0")selected#end>无</option>
+            	<option value="1" #if($!param.title == "1") selected#end>小微企业主</option>
+            	<option value="2" #if($!param.title == "2") selected#end>企业高管</option>
+			</select>
+    		<select class="span2" name="assetHouse">
+            	<option value="">是否有房</option>
+            	<option value="0" #if($!param.assetHouse == "0")selected#end>无</option>
+            	<option value="1" #if($!param.assetHouse == "1") selected#end>明确有</option>
+            	<option value="2" #if($!param.assetHouse == "2") selected#end>很大概率有</option>
+			</select>
+			<select class="span2" name="assetCar">
+            	<option value="">是否有车</option>
+            	<option value="0" #if($!param.assetCar == "0")selected#end>无</option>
+            	<option value="1" #if($!param.assetCar == "1") selected#end>明确有</option>
+            	<option value="2" #if($!param.assetCar == "2") selected#end>很大概率有</option>
+			</select>
+			<select class="span2" name="assetFin">
+            	<option value="">是否理财</option>
+            	<option value="0" #if($!param.assetFin == "0")selected#end>无</option>
+            	<option value="1" #if($!param.assetFin == "1") selected#end>明确有</option>
+			</select>
+			<select class="span2" name="assetWealth">
+            	<option value="">用户价值</option>
+            	<option value="0" #if($!param.assetWealth == "0")selected#end>无</option>
+            	<option value="1" #if($!param.assetWealth == "1") selected#end>高储蓄净值客户</option>
+            	<option value="2" #if($!param.assetWealth == "2") selected#end>金融机构高端用户</option>
+            	<option value="3" #if($!param.assetWealth == "3") selected#end>电信运营商高端用户</option>
+			</select>
+        </div>
+        
+        <div class="controls controls-row">
+        	<p class="span2 btn btn-success disabled" style="width:7.5%">其他信息</p>
+        	<select class="span2" name="type">
+            	<option value="">key类型</option>
+            	<option value="id">身份证</option>
+            	<option value="cell">手机号</option>
+            	<option value="mail">邮箱</option>
+			</select>
+			<input type="text" name="areaProvince"  class="span2" placeholder="省"/>
+    		<input type="text" name="areaCity"  class="span2" placeholder="市"/>
+			<input type="text" name="applyLoanCount" class="span2" placeholder="申请总次数范围"/>
+    		<input type="text" name="applyLoanOrgCount" class="span2" placeholder="申请机构数范围"/>
+    	</div>
+    	<div class="controls controls-row">
+    		<p class="span2" style="width:7.5%"></p>
+    		<select class="span2" name="sex">
+            	<option value="">性别</option>
+            	<option value="0">女</option>
+            	<option value="1">男</option>
+            	<option value="2">未知</option>
+			</select>
+    		<input type="text" name="birthYear" class="span2" placeholder="出生年范围"/>
+    	</div>
+    	
+    	<div class="controls controls-row">
+        	<p class="span2 btn btn-success disabled" style="width:7.5%">特殊名单</p>
+    		<input type="text" name="blackListStr" class="span5" value="$!param.blackListStr" placeholder="不包含特殊名单标签的数据,多个标签逗号分隔,需与其他条件配合使用"/>
+        </div>
+        <div class="controls controls-row">
+        	<input type="hidden" name="table" id="table" value="" />
+		    <input type="hidden" name="column" id="column" value="cf" />
+	    	<input type="hidden" name="offset" id="offset" value="" />
+	    	<input type="hidden" name="limit" id="limit" value="20" />
+		    <input type="hidden" name="ecQueryJson" id="ecQueryJson" />
+		    <input type="hidden" name="mediaQueryJson" id="mediaQueryJson" />
+		    <input type="hidden" name="condition" id="condition" />
+			<button type="submit" class="btn btn-primary" id="submit">查询</button>
+			<button class="btn btn-primary" id="export">导出</button>
+			<input type="text" name="exportNum" id="exportNum" style="width:150px;margin:5px" placeholder="导出数据量,最大10万" />
+		</div>
+	  </div>
+    </div>
+    </form>
+</div>
+
+<div class="row-fluid">
+<label id="count">满足条件总记录0条</label>
+<table class="table">
+  <thead id="head">
+ 	
+  </thead>
+  
+</table>
+</div>
+
+<div class="row-fluid" id="addMoreDiv" style="display:none;">
+	<center><button class="btn btn-primary" id="addMore">加载更多</button></center>
+</div>
+
+#set($modalId="showLog")
+#set($modalTitle="数据详情")
+#set($modalMessage="")
+#modal($modalId,$modalTitle,$modalMessage)
+
+
+<script type="text/javascript">
+	var tableDescList = JSON.parse("$tableDescJson");
+	var currentCol = new Array();
+	var currentDefaultVal = new Array();
+	var convertVal = {"cf|title":{"0":"无","1":"小微企业主","2":"企业高管"},
+					  "cf|asset_house":{"0":"无","1":"明确有","2":"很大概率有"},
+					  "cf|asset_car":{"0":"无","1":"明确有","2":"很大概率有"},
+					  "cf|asset_fin":{"0":"无","1":"明确有","2":"很大概率有"},
+					  "cf|asset_weath":{"0":"无","1":"高储蓄净值客户","2":"金融机构高端用户","3":"电信运营商高端用户"}
+					 };
+	
+	function changeIndex(clearVal){
+		var index = 0;
+		$("#table").val(tableDescList[index]["simpleName"]);
+		currentCol = tableDescList[index]["col"];
+		currentDefaultVal = tableDescList[index]["defaultVal"];
+		var headArray = tableDescList[index]["head"];
+		var head = "<tr><th>rowkey</th>";
+		for(var i=0;i<headArray.length;i++){
+			head = head + "<th>"+headArray[i]+"</th>";
+		}
+		head = head +"<th>操作</th></tr>";
+		$("#head").html(head);
+		if(clearVal){
+			$("#condition").val("");
+		}
+		$("#offset").val("");
+		$("#count").html("满足条件总记录0条");
+		$("#addMoreDiv").hide();
+	}
+	
+
+	function queryData(isFirst){
+		
+		var condition = encodeURI($("#condition").val());
+		var table = $("#table").val();
+		
+		var offset = "";
+		if(!isFirst){
+			offset = encodeURI($("#offset").val());
+		}
+		if(isFirst){
+			$("#count").html("数据正在加载...");
+			$("#addMoreDiv").hide();
+		}
+		
+		var column = $("#column").val();
+		$.ajax({
+			url:"$ctx/hbase_index/query.do",
+			data:{"condition":condition,"table":table,"offset":offset,"column":column},
+			type: "POST",
+			dataType: "json",
+			success: function(data) {
+				if(data.code == 0){
+					if(isFirst){
+						changeIndex(false);
+					}
+					var detail = data.result.detail;
+					var appendHtml = "";
+					for(var i = 0 ; i< detail.length;i++){
+						var uniqKey = detail[i]["uniq_key"];
+						appendHtml = appendHtml +"<tr><td>"+uniqKey+"</td>";
+						for(var j = 0 ; j < currentCol.length;j++){ 
+							var colVal = detail[i][currentCol[j]];
+							if(colVal == null || colVal == "undefined"){
+								colVal = currentDefaultVal[j];
+							}
+							if( (convertVal[currentCol[j]] != null && convertVal[currentCol[j]] != "undefined") && convertVal[currentCol[j]][colVal] != "undefined"){
+								colVal = convertVal[currentCol[j]][""+colVal];
+							}
+							appendHtml = appendHtml + "<td>"+colVal+"</td>";
+						}
+						appendHtml = appendHtml + "<td><a href=\"javascript:detail('"+uniqKey+"')\">查看</a></td>";
+					}
+					$("#head").append(appendHtml);
+					if(data.result.hasMore){
+						$("#addMoreDiv").show();
+					}else{
+						$("#addMoreDiv").hide();
+					}
+					if(isFirst){
+						if(data.result.extra.count != 0){
+							$("#count").html("满足条件总记录"+data.result.extra.count+"条");
+						}else{
+							$("#count").html("无满足条件数据");
+							$("#head").html("");
+						}
+					}
+					$("#offset").val(data.result.extra.offset);
+				}else{
+					alert(data.message);
+					$("#count").html("无满足条件数据");
+					$("#head").html("");
+				}
+			},
+			error:function(){
+				alert("查询数据超时,请重试.");
+			}
+		});
+		
+	}
+
+
+	function initPostData(){
+		var defer = $.Deferred();
+		var ecArray=new Array();
+		var mediaArray = new Array();
+		var pos = 0;
+		$("#condition .ecCate").each(function(){
+			var item = $(this);
+			var name = $(item).find("[name='cateName']").val();
+			if(name != ""){
+				var ecQueryDto = new Object();
+				var visit = $(item).find("[name='visit']").val();
+				var buy = $(item).find("[name='buy']").val();
+				var pay = $(item).find("[name='pay']").val();
+				var month = $(item).find("[name='month']").val();
+				ecQueryDto.cateName = name;
+				ecQueryDto.visit = visit;
+				ecQueryDto.buy = buy;
+				ecQueryDto.pay = pay;
+				ecQueryDto.month = month;
+				ecArray[pos] = ecQueryDto;
+				pos ++;
+			}
+		});
+		pos =0 ;
+		$("#condition .mediaCate").each(function(){
+			var item = $(this);
+			var name = $(item).find("[name='cateName']").val();
+			if(name != ""){
+				var mediaQueryDto = new Object();
+				var visitday = $(item).find("[name='visitday']").val();
+				mediaQueryDto.cateName = name;
+				mediaQueryDto.visitday = visitday;
+				mediaArray[pos] = mediaQueryDto;
+				pos ++;
+			}
+		});
+		$("#ecQueryJson").val(JSON.stringify(ecArray));
+		$("#mediaQueryJson").val(JSON.stringify(mediaArray));
+		
+		// 生成过滤条件
+		$.ajax({
+			url:"$ctx/user_index/generateQueryCondition.do",
+			data:$('#find_form').serialize(),
+			type: "POST",
+			dataType: "json",
+			success: function(data) {
+				if(data.code == 0){
+					$("#condition").val(data.result);
+					defer.resolve(data);
+				}else{
+					alert(data.message);
+				}
+			}
+		});
+		return defer;
+	}
+	$(document).ready(function(){
+		changeIndex(true);
+		$("#export").click(function(){
+			var derfer=initPostData();
+			$.when(derfer).done(function(data){
+				var queryParam = "condition="+encodeURI($("#condition").val())+"&table="+encodeURI($("#table").val())+"&column="+encodeURI($("#column").val());
+				if($("#exportNum").val() != ""){
+					queryParam = queryParam+"&exportNum="+$("#exportNum").val();
+				}
+				var url = "${ctx}/hbase_index/export.do?"+queryParam;
+				window.open(url);
+			});
+			return false;
+		});
+		$("#exportNum").blur(function(){
+			var exportNumVal = $("#exportNum").val();
+			if(exportNumVal == ""){
+				return;
+			}
+			try{
+				if(parseInt(exportNumVal) > 100000){
+					alert("导出数据量最大为100000");
+					$("#exportNum").val("");
+				}
+			}catch(err){
+				alert("请输入要导出的数量。");
+			}
+		});
+		
+		$("#submit").click(function(){
+			var derfer=initPostData();
+			$.when(derfer).done(function(data){
+            	queryData(true);
+        	});
+			
+			return false;
+		});
+		
+		$("#addMore").click(function(){
+			queryData(false);
+		});
+	});
+	function delEcQuery(item){
+		$(item).parent().remove();
+	}
+	function addEcQuery(item){
+		var parentDoc = $(item).parent().parent();
+		var currentDoc = $(item).parent();
+		var cloneDoc = $(currentDoc).clone();
+		$(cloneDoc).find("select").val("");
+		$(cloneDoc).find("input").val("");
+		$(cloneDoc).find("p:first").removeClass("btn btn-success disabled").html("");
+		$(cloneDoc).find("i").remove();
+		$(cloneDoc).append("<i class=\"icon-trash\" style=\"margin:0 10px 0px\" onclick=\"javascript:delEcQuery(this)\"></i>");
+		$(cloneDoc).insertAfter($("#condition .ecCate:last"));
+	}
+	
+	function delMediaQuery(item){
+		$(item).parent().remove();
+	}
+	
+	function addMediaQuery(item){
+		console.log($(item));
+		var parentDoc = $(item).parent().parent();
+		var currentDoc = $(item).parent();
+		var cloneDoc = $(currentDoc).clone();
+		$(cloneDoc).find("select").val("");
+		$(cloneDoc).find("input").val("");
+		$(cloneDoc).find("p:first").removeClass("btn btn-success disabled").html("");
+		$(cloneDoc).find("i").remove();
+		$(cloneDoc).append("<i class=\"icon-trash\" style=\"margin:0 10px 0px\" onclick=\"javascript:delMediaQuery(this)\"></i>");
+		$(cloneDoc).insertAfter($("#condition .mediaCate:last"));
+	}
+	
+	var operationId;
+	function detail(rowkey){
+		var table = $("#table").val();
+		$.ajax({
+			url:"$ctx/hbase_index/detail",
+			data:{"table":table,"rowkey":rowkey},
+			type: "GET",
+			dataType: "json",
+			success: function(data) {
+				if(data.code == 0){
+					$("#showLog .modal-body textarea").text(JSON.stringify(data.result,null, "\t"));
+					$("#showLog .modal-body textarea").attr("width","400px");
+					$("#showLog .modal-body textarea").attr("height","500px");
+					$("#showLog .modal-body textarea").show();
+					$("#showLog").modal('show');
+				}else{
+					alert(data.message);
+				}
+			}
+		});
+	}
+</script>
+
+
+#parse("shared/footer.vm")

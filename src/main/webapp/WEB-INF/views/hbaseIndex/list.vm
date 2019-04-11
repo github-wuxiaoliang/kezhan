@@ -1,0 +1,234 @@
+#set($side_bar="schedule_client")
+#set($tab_bar="list")
+#set($top_menu="hbase_index")
+#parse("shared/header.vm")
+#parse("shared/top_menu.vm")
+#parse("shared/side_bar.vm")
+#parse("shared/client_tab_bar.vm")
+#parse("shared/page.vm")
+#parse("shared/modal.vm")
+<div class="row-fluid">
+	<form action="" method="POST" id="find_form">
+	<div class="control-group">
+      <div class="controls  controls-row">
+        <div class="controls controls-row">
+        	<p class="span2 btn btn-success disabled" style="width:7.5%">索引表名</p>
+        	<select class="span2" name="table" id="table">
+        		#foreach($item in $tableDesc)
+        			<option value="$item.simpleName" idx="$foreach.count">$item.name</option>
+        		#end
+        	</select>
+        </div>
+        <div class="controls controls-row">
+    		<p class="span2 btn btn-success disabled" style="width:7.5%">过滤条件</p>
+    		<textarea style="width:760px;height:130px;" name="condition" id="condition" class="span2"></textarea>
+        </div>
+        <div class="controls controls-row">
+	    	<input type="hidden" name="column" id="column" value="cf" />
+	    	<input type="hidden" name="offset" id="offset" value="" />
+	    	<input type="hidden" name="limit" id="limit" value="20" />
+			<button type="submit" class="btn btn-primary" id="submit">查询</button>
+			<button class="btn btn-primary" id="export">导出</button>
+			<input type="text" name="exportNum" id="exportNum" style="width:150px;margin:5px" placeholder="导出数据量,最大10万" />
+		</div>
+	  </div>
+    </div>
+    </form>
+</div>
+<div class="row-fluid">
+<label id="count">满足条件总记录0条</label>
+<table class="table">
+  <thead id="head">
+ 	
+  </thead>
+  
+</table>
+</div>
+
+<div class="row-fluid" id="addMoreDiv" style="display:none;">
+	<center><button class="btn btn-primary" id="addMore">加载更多</button></center>
+</div>
+
+#set($modalId="showLog")
+#set($modalTitle="数据详情")
+#set($modalMessage="")
+#modal($modalId,$modalTitle,$modalMessage)
+
+<script type="text/javascript">
+	var tableDescList = JSON.parse("$tableDescJson");
+	var currentCol = new Array();
+	var currentDefaultVal = new Array();
+	
+	function changeIndex(clearVal){
+		var index = parseInt($("#table option:selected").attr("idx")) - 1;
+		currentCol = tableDescList[index]["col"];
+		currentDefaultVal = tableDescList[index]["defaultVal"];
+		var headArray = tableDescList[index]["head"];
+		var head = "<tr><th>rowkey</th>";
+		for(var i=0;i<headArray.length;i++){
+			head = head + "<th>"+headArray[i]+"</th>";
+		}
+		head = head +"<th>操作</th></tr>";
+		$("#head").html(head);
+		if(clearVal){
+			$("#condition").val("");
+		}
+		$("#offset").val("");
+		$("#count").html("满足条件总记录0条");
+		$("#addMoreDiv").hide();
+	}
+	
+
+	function queryData(isFirst){
+		var condition = encodeURI($("#condition").val());
+		var table = $("#table").val();
+		
+		var offset = "";
+		if(!isFirst){
+			offset = encodeURI($("#offset").val());
+		}
+		if(isFirst){
+			$("#count").html("数据正在加载...");
+			$("#addMoreDiv").hide();
+		}
+		
+		var column = $("#column").val();
+		$.ajax({
+			url:"$ctx/hbase_index/query.do",
+			data:{"condition":condition,"table":table,"offset":offset,"column":column},
+			type: "POST",
+			dataType: "json",
+			success: function(data) {
+				if(data.code == 0){
+					if(isFirst){
+						changeIndex(false);
+					}
+					var detail = data.result.detail;
+					var appendHtml = "";
+					for(var i = 0 ; i< detail.length;i++){
+						var uniqKey = detail[i]["uniq_key"];
+						appendHtml = appendHtml +"<tr><td>"+uniqKey+"</td>";
+						for(var j = 0 ; j < currentCol.length;j++){ 
+							var colVal = detail[i][currentCol[j]];
+							if(colVal == null || colVal == "undefined"){
+								colVal = currentDefaultVal[j];
+							}
+							appendHtml = appendHtml + "<td>"+colVal+"</td>";
+						}
+						appendHtml = appendHtml + "<td><a href=\"javascript:detail('"+uniqKey+"')\">查看</a></td>";
+					}
+					$("#head").append(appendHtml);
+					if(data.result.hasMore){
+						$("#addMoreDiv").show();
+					}else{
+						$("#addMoreDiv").hide();
+					}
+					if(isFirst){
+						if(data.result.extra.count != 0){
+							$("#count").html("满足条件总记录"+data.result.extra.count+"条");
+						}else{
+							$("#count").html("无满足条件数据");
+							$("#head").html("");
+						}
+					}
+					$("#offset").val(data.result.extra.offset);
+				}else{
+					alert(data.message);
+					$("#count").html("无满足条件数据");
+					$("#head").html("");
+				}
+			},
+			error:function(){
+				alert("查询数据超时,请重试.");
+			}
+		});
+		
+	}
+
+	$(document).ready(function(){
+		changeIndex(true);
+		$("#table").change(function(){
+			changeIndex(true);
+		});
+		
+		$("#export").click(function(){
+			var queryParam = "condition="+encodeURI($("#condition").val())+"&table="+encodeURI($("#table").val())+"&column="+encodeURI($("#column").val());
+			if($("#exportNum").val() != ""){
+				queryParam = queryParam+"&exportNum="+$("#exportNum").val();
+			}
+			var url = "${ctx}/hbase_index/export.do?"+queryParam;
+			window.open(url);
+			return false;
+		});
+		$("#exportNum").blur(function(){
+			var exportNumVal = $("#exportNum").val();
+			if(exportNumVal == ""){
+				return;
+			}
+			try{
+				if(parseInt(exportNumVal) > 100000){
+					alert("导出数据量最大为100000");
+					$("#exportNum").val("");
+				}
+			}catch(err){
+				alert("请输入要导出的数量。");
+			}
+		});
+		$("#addMore").click(function(){
+			queryData(false);
+		});
+		
+		$("#submit").click(function(){
+			queryData(true);
+			
+			return false;
+		});
+	});
+	
+	function syntaxHighlight(json) {
+	    if (typeof json != 'string') {
+	         json = JSON.stringify(json, undefined, 2);
+	    }
+	    json = json.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+	    return json.replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, function (match) {
+	        var cls = 'number';
+	        if (/^"/.test(match)) {
+	            if (/:$/.test(match)) {
+	                cls = 'key';
+	            } else {
+	                cls = 'string';
+	            }
+	        } else if (/true|false/.test(match)) {
+	            cls = 'boolean';
+	        } else if (/null/.test(match)) {
+	            cls = 'null';
+	        }
+	        return '<span class="' + cls + '">' + match + '</span>';
+	    });
+	}
+	
+	var operationId;
+	function detail(rowkey){
+		var table = $("#table").val();
+		$.ajax({
+			url:"$ctx/hbase_index/detail",
+			data:{"table":table,"rowkey":rowkey},
+			type: "GET",
+			dataType: "json",
+			success: function(data) {
+				if(data.code == 0){
+					$("#showLog .modal-body textarea").text(JSON.stringify(data.result,null, "\t"));
+					$("#showLog .modal-body textarea").attr("width","400px");
+					$("#showLog .modal-body textarea").attr("height","500px");
+					$("#showLog .modal-body textarea").show();
+					$("#showLog").modal('show');
+				}else{
+					alert(data.message);
+				}
+			}
+		});
+	}
+</script>
+
+
+#parse("shared/footer.vm")

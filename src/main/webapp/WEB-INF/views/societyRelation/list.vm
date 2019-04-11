@@ -1,0 +1,280 @@
+#set($side_bar="schedule_client")
+#set($tab_bar="list")
+#set($top_menu="society_relation")
+#parse("shared/header.vm")
+#parse("shared/top_menu.vm")
+#parse("shared/side_bar.vm")
+#parse("shared/client_tab_bar.vm")
+#parse("shared/page.vm")
+#parse("shared/modal.vm")
+<div class="row-fluid">
+	<form action="$ctx/society_relation/list.do" method="POST" id="find_form">
+	<div class="control-group">
+		<div class="controls controls-row">
+        	<p class="span2 btn btn-success disabled" style="width:7.5%">微博属性</p>
+    		<input type="text" name="level" class="span2" placeholder="微博等级范围"/>
+        	<input type="text" name="followNum" class="span2" placeholder="关注人数范围"/>
+        	<input type="text" name="fansNum" class="span2" placeholder="粉丝人数范围"/>
+        </div>
+        <div class="controls controls-row">
+        	<p class="span2" style="width:7.5%"></p>
+    		<input type="text" name="weiboNum" class="span2" placeholder="发表微博总数范围"/>
+        	<input type="text" name="spread" class="span2" placeholder="传播力范围"/>
+        	<input type="text" name="location" class="span2" placeholder="社交帐号所在城市"/>
+        </div>
+        <div class="controls controls-row">
+        	<p class="span2 btn btn-success disabled" style="width:7.5%">用户属性</p>
+        	<select class="span2" name="matchType">
+        		<option value="">账号类型</option>
+            	<option value="1">手机号注册</option>
+            	<option value="2">邮箱注册</option>
+            	<option value="3">手机号+邮箱注册</option>
+            	<option value="4">其他</option>
+			</select>
+			<select class="span2" name="userType">
+        		<option value="">用户类型</option>
+            	<option value="1">普通用户</option>
+            	<option value="2">认证用户</option>
+            	<option value="4">未知</option>
+            	<option value="7">微博达人</option>
+            	<option value="10">微博女郎</option>
+			</select>
+			<select class="span2" name="gender">
+        		<option value="">用户性别</option>
+            	<option value="M">男</option>
+            	<option value="F">女</option>
+			</select>
+    	</div>
+        <div class="controls controls-row">
+        	<p class="span2 btn btn-success disabled" style="width:7.5%">兴趣标签</p>
+        	<input type="text" name="tagStr" class="span5" placeholder="多个兴趣标签用逗号分隔"/>
+    	</div>
+    	<div class="controls controls-row">
+        	<p class="span2 btn btn-success disabled" style="width:7.5%">行业信息</p>
+        	<input type="text" name="industryStr" class="span5" placeholder="多个行业用逗号分隔"/>
+    	</div>
+        
+        <div class="controls controls-row">
+        	<p class="span2 btn btn-success disabled" style="width:7.5%">特殊名单</p>
+    		<input type="text" name="blackListStr" class="span5" placeholder="不包含特殊名单标签的数据,多个标签逗号分隔,需与其他条件配合使用"/>
+        </div>
+	    <div class="controls controls-row">
+	    	<input type="hidden" name="table" id="table" value="" />
+		    <input type="hidden" name="column" id="column" value="cf" />
+	    	<input type="hidden" name="offset" id="offset" value="" />
+	    	<input type="hidden" name="limit" id="limit" value="20" />
+		    <input type="hidden" name="condition" id="condition" />
+			<button type="submit" class="btn btn-primary" id="submit">查询</button>
+			<button class="btn btn-primary" id="export">导出</button>
+			<input type="text" name="exportNum" id="exportNum" style="width:150px;margin:5px" placeholder="导出数据量,最大10万" />
+	  </div>
+	  </div>
+    </div>
+    </form>
+</div>
+
+<div class="row-fluid">
+<label id="count">满足条件总记录0条</label>
+<table class="table">
+  <thead id="head">
+ 	
+  </thead>
+  
+</table>
+</div>
+
+<div class="row-fluid" id="addMoreDiv" style="display:none;">
+	<center><button class="btn btn-primary" id="addMore">加载更多</button></center>
+</div>
+
+#set($modalId="showLog")
+#set($modalTitle="数据详情")
+#set($modalMessage="")
+#modal($modalId,$modalTitle,$modalMessage)
+
+<script type="text/javascript">
+	var tableDescList = JSON.parse("$tableDescJson");
+	var currentCol = new Array();
+	var currentDefaultVal = new Array();
+	var convertVal = {"cf|sr_match_type":{"1":"手机号注册","2":"邮箱注册","3":"手机+邮箱注册","4":"其他"},
+					"cf|sr_gender":{"M":"男","F":"女"}
+					};
+	
+	function changeIndex(clearVal){
+		var index = 3;
+		$("#table").val(tableDescList[index]["simpleName"]);
+		currentCol = tableDescList[index]["col"];
+		currentDefaultVal = tableDescList[index]["defaultVal"];
+		var headArray = tableDescList[index]["head"];
+		var head = "<tr><th>rowkey</th>";
+		for(var i=0;i<headArray.length;i++){
+			head = head + "<th>"+headArray[i]+"</th>";
+		}
+		head = head +"<th>操作</th></tr>";
+		$("#head").html(head);
+		if(clearVal){
+			$("#condition").val("");
+		}
+		$("#offset").val("");
+		$("#count").html("满足条件总记录0条");
+		$("#addMoreDiv").hide();
+	}
+	
+
+	function queryData(isFirst){
+		
+		var condition = encodeURI($("#condition").val());
+		var table = $("#table").val();
+		
+		var offset = "";
+		if(!isFirst){
+			offset = encodeURI($("#offset").val());
+		}
+		if(isFirst){
+			$("#count").html("数据正在加载...");
+			$("#addMoreDiv").hide();
+		}
+		
+		var column = $("#column").val();
+		$.ajax({
+			url:"$ctx/hbase_index/query.do",
+			data:{"condition":condition,"table":table,"offset":offset,"column":column},
+			type: "POST",
+			dataType: "json",
+			success: function(data) {
+				if(data.code == 0){
+					if(isFirst){
+						changeIndex(false);
+					}
+					var detail = data.result.detail;
+					var appendHtml = "";
+					for(var i = 0 ; i< detail.length;i++){
+						var uniqKey = detail[i]["uniq_key"];
+						appendHtml = appendHtml +"<tr><td>"+uniqKey+"</td>";
+						for(var j = 0 ; j < currentCol.length;j++){ 
+							var colVal = detail[i][currentCol[j]];
+							if(colVal == null || colVal == "undefined"){
+								colVal = currentDefaultVal[j];
+							}
+							if( (convertVal[currentCol[j]] != null && convertVal[currentCol[j]] != "undefined") && convertVal[currentCol[j]][colVal] != "undefined"){
+								colVal = convertVal[currentCol[j]][""+colVal];
+							}
+							appendHtml = appendHtml + "<td>"+colVal+"</td>";
+						}
+						appendHtml = appendHtml + "<td><a href=\"javascript:detail('"+uniqKey+"')\">查看</a></td>";
+					}
+					$("#head").append(appendHtml);
+					if(data.result.hasMore){
+						$("#addMoreDiv").show();
+					}else{
+						$("#addMoreDiv").hide();
+					}
+					if(isFirst){
+						if(data.result.extra.count != 0){
+							$("#count").html("满足条件总记录"+data.result.extra.count+"条");
+						}else{
+							$("#count").html("无满足条件数据");
+							$("#head").html("");
+						}
+					}
+					$("#offset").val(data.result.extra.offset);
+				}else{
+					alert(data.message);
+					$("#count").html("无满足条件数据");
+					$("#head").html("");
+				}
+			},
+			error:function(){
+				alert("查询数据超时,请重试.");
+			}
+		});
+	}
+
+
+	function initPostData(){
+		var defer = $.Deferred();
+		
+		// 生成过滤条件
+		$.ajax({
+			url:"$ctx/society_relation/generateQueryCondition.do",
+			data:$('#find_form').serialize(),
+			type: "POST",
+			dataType: "json",
+			success: function(data) {
+				if(data.code == 0){
+					$("#condition").val(data.result);
+					defer.resolve(data);
+				}else{
+					alert(data.message);
+				}
+			}
+		});
+		return defer;
+	}
+	$(document).ready(function(){
+		changeIndex(true);
+		$("#export").click(function(){
+			var derfer=initPostData();
+			$.when(derfer).done(function(data){
+				var queryParam = "condition="+encodeURI($("#condition").val())+"&table="+encodeURI($("#table").val())+"&column="+encodeURI($("#column").val());
+				if($("#exportNum").val() != ""){
+					queryParam = queryParam+"&exportNum="+$("#exportNum").val();
+				}
+				var url = "${ctx}/hbase_index/export.do?"+queryParam;
+				window.open(url);
+			});
+			return false;
+		});
+		$("#exportNum").blur(function(){
+			var exportNumVal = $("#exportNum").val();
+			if(exportNumVal == ""){
+				return;
+			}
+			try{
+				if(parseInt(exportNumVal) > 100000){
+					alert("导出数据量最大为100000");
+					$("#exportNum").val("");
+				}
+			}catch(err){
+				alert("请输入要导出的数量。");
+			}
+		});
+		$("#submit").click(function(){
+			var derfer=initPostData();
+			$.when(derfer).done(function(data){
+            	queryData(true);
+        	});
+			
+			return false;
+		});
+		
+		$("#addMore").click(function(){
+			queryData(false);
+		});
+	});
+	
+	var operationId;
+	function detail(rowkey){
+		var table = $("#table").val();
+		$.ajax({
+			url:"$ctx/hbase_index/detail",
+			data:{"table":table,"rowkey":rowkey},
+			type: "GET",
+			dataType: "json",
+			success: function(data) {
+				if(data.code == 0){
+					$("#showLog .modal-body textarea").text(JSON.stringify(data.result,null, "\t"));
+					$("#showLog .modal-body textarea").attr("width","400px");
+					$("#showLog .modal-body textarea").attr("height","500px");
+					$("#showLog .modal-body textarea").show();
+					$("#showLog").modal('show');
+				}else{
+					alert(data.message);
+				}
+			}
+		});
+	}
+</script>
+
+
+#parse("shared/footer.vm")

@@ -1,0 +1,6 @@
+keyCell={"namePattern":"^keyCell$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+docId={"namePattern":"^docId$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+acm_card_index={"namePattern":"^acm_card_index$","fieldValueType":"FIELD_INT","suportConditTypes":["BETWEEN"]}
+acm_m1_m6_avg_credit_out={"namePattern":"^acm_m1_m6_avg_credit_out$","fieldValueType":"FIELD_INT","suportConditTypes":["BETWEEN"]}
+acm_m1_m6_avg_debit_in={"namePattern":"^acm_m1_m6_avg_debit_in$","fieldValueType":"FIELD_INT","suportConditTypes":["BETWEEN"]}
+black_list={"namePattern":"^black_list_[^_]*$","fieldValueType":"FIELD_STRING","suportConditTypes":["NOT_EQUAL"]}

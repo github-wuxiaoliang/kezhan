@@ -1,0 +1,8 @@
+keyId={"namePattern":"^keyId$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+docId={"namePattern":"^docId$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+at_has_cell={"namePattern":"^at_has_cell$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+at_total_num={"namePattern":"^at_total_num$","fieldValueType":"FIELD_INT","suportConditTypes":["BETWEEN"]}
+at_total_first_num={"namePattern":"^at_total_first_num$","fieldValueType":"FIELD_INT","suportConditTypes":["BETWEEN"]}
+at_total_business_num={"namePattern":"^at_total_business_num$","fieldValueType":"FIELD_INT","suportConditTypes":["BETWEEN"]}
+at_total_economy_num={"namePattern":"^at_total_economy_num$","fieldValueType":"FIELD_INT","suportConditTypes":["BETWEEN"]}
+black_list={"namePattern":"^black_list_[^_]*$","fieldValueType":"FIELD_STRING","suportConditTypes":["NOT_EQUAL"]}

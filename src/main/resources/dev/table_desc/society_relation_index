@@ -1,0 +1,15 @@
+keyCell={"namePattern":"^keyCell$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+keyMail={"namePattern":"^keyMail$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+docId={"namePattern":"^docId$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+sr_match_type={"namePattern":"^sr_match_type$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+sr_user_type={"namePattern":"^sr_user_type$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+sr_gender={"namePattern":"^sr_gender$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+sr_int_tag_{tag}={"namePattern":"^sr_int_tag_[^_]*$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+sr_level={"namePattern":"^sr_level$","fieldValueType":"FIELD_INT","suportConditTypes":["BETWEEN"]}
+sr_follow_num={"namePattern":"^sr_follow_num$","fieldValueType":"FIELD_INT","suportConditTypes":["BETWEEN"]}
+sr_fans_num={"namePattern":"^sr_fans_num$","fieldValueType":"FIELD_INT","suportConditTypes":["BETWEEN"]}
+sr_spread={"namePattern":"^sr_spread$","fieldValueType":"FIELD_INT","suportConditTypes":["BETWEEN"]}
+sr_industry_{industry}={"namePattern":"^sr_industry_[^_]*$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+sr_location={"namePattern":"^sr_location$","fieldValueType":"FIELD_STRING","suportConditTypes":["EQUAL"]}
+sr_weibo_num={"namePattern":"^sr_weibo_num$","fieldValueType":"FIELD_INT","suportConditTypes":["BETWEEN"]}
+black_list={"namePattern":"^black_list_[^_]*$","fieldValueType":"FIELD_STRING","suportConditTypes":["NOT_EQUAL"]}

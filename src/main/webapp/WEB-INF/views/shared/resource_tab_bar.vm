@@ -1,0 +1,6 @@
+<div class="row-fluid">
+<ul class="nav nav-tabs">
+<li#if($tab_bar=="list") class="active" #end><a #if($tab_bar!="list")href="$ctx/resource/list"#end>脚本列表</a></li>
+<li #if($tab_bar=="show") class="active" #end><a #if($tab_bar!="show")href="$ctx/resource/show"#end>更新/新增脚本</a></li>
+</ul>
+</div>
